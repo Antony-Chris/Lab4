@@ -6,8 +6,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
 const MongoClient = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
 const uri = "mongodb+srv://root:123@cluster0.wnzsf.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect(err => {
