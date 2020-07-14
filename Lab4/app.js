@@ -6,22 +6,25 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var bcrypt = require('bcryptjs');
+
 const MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
 const uri = "mongodb+srv://root:123@cluster0.wnzsf.mongodb.net/test?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect(err => {
-    const collection = client.db("test").collection("devices");
-    console.log(collection);
-    client.close();
-});
-
-
-
-
-
-
-
+try {
+    mongoose.connect(uri, { useNewUrlParser: true });
+    var db = mongoose.connection;
+    db.on('error', function (err) {
+        console.log(err);
+    });
+    db.once('open', function (callback) {
+        console.log('Connected to MongoDB');
+    });
+} catch (err) {
+    console.log("Error : " + err);
+}
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -40,8 +43,55 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//For passport
+app.use(session({
+    secret: 'secrettexthere',
+    saveUninitialized: true,
+    resave: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/', routes);
 app.use('/users', users);
+
+//Serialize user
+passport.serializeUser(function (user, done) {
+    done(null, user.id)
+});
+
+//Deserialize user try to find username
+passport.deserializeUser(function (id, done) {
+    userModel.findById(id, function (err, user) {
+        done(err, user);
+    });
+});
+
+
+//Local strategy used for logging users
+passport.use(new LocalStrategy(
+    function (username, password, done) {
+        userModel.findOne({
+            username: username
+        }, function (err, user) {
+            if (err) {
+                return done(err);
+            }
+
+            if (!user) {
+                return done(null, false);
+            }
+
+            //Compare hashed passwords
+            if (!bcrypt.compareSync(password, user.password)) {
+                return done(null, false);
+            }
+
+            return done(null, user);
+        });
+    }
+));
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
