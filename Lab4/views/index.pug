@@ -1,17 +1,5 @@
 extends layout
 
 block content
-  //Check for any articles being passed in from the server
-  if (articles && articles.length)
-    table
-        thead
-            th Name
-            th Description
-        tbody
-            //If there is articles, create a row and column for each article
-            each article in articles
-                tr
-                    td= article.name
-                    td= article.description
-  else
-    h1 No articles!
+  h1= title
+  p Welcome to #{title}
