@@ -9,6 +9,13 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var bcrypt = require('bcryptjs');
+var path = require('path');
+
+// Set the default templating engine to ejs
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+
 
 const MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
