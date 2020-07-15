@@ -1,10 +1,14 @@
-'use strict';
-var express = require('express');
-var router = express.Router();
+const mongoose = require('mongoose')
 
-/* GET users listing. */
-router.get('/', function (req, res) {
-    res.send('respond with a resource');
+//Create the user schema
+const UserSchema = new mongoose.Schema({
+    username: {
+        type: String
+    },
+    password: {
+        type: String
+    }
 });
-
-module.exports = router;
+//Create, instantiate and export model with schema
+const Users = mongoose.model("User", UserSchema);
+module.exports = Users;

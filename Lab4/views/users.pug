@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1 users Page
+  form(method='POST' action='/users')
+    fieldset
+        label(for='userId') User_ID
+        input#username(type='text' name='userId')
+    fieldset
+        label(for='username') username
+        input#password(type='password' name='username')
+    input(type='submit' value='Login')
+
